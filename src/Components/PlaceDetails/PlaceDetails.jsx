@@ -4,13 +4,20 @@ import LocationOnIcon from '@material-ui/icons/LocationOn';
 import PhoneIcon from '@material-ui/icons/Phone';
 import Rating from '@material-ui/lab/Rating';
 import useStyles from './styles'
-import { LocationOn } from '@material-ui/icons';
 
-
-const PlaceDetails =({place})=> {
+const PlaceDetails =({place,selected,refProp,refs})=> {
     const classes= useStyles();
-    console.log("hello place",place)
-
+    
+  if(selected){
+    try{
+      refProp?.current?.scrollIntoView({behavior:"smooth",block:"start"});
+      
+    }
+    catch(err){
+      console.log("error withthe scrollIntoView")
+    }
+    
+  } 
     return (
       <Card elevation={6}>
         <CardMedia
@@ -18,16 +25,16 @@ const PlaceDetails =({place})=> {
           image={
             place.photo
               ? place.photo.images.large.url
-              : "https://www.foodserviceandhospitality.com/wp-content/uploads/2016/09/Restaurant-Placeholder-001.jpg"
+              : "https://www.foodserviceandhospitality.com/wp-content/uploads/2016/09/Restaurant-Placeholder-001.jpg" //demo image
           }
           title={place.name}
-        ></CardMedia>
+        />
         <CardContent>
           <Typography gutterBottom="h5">{place.name}</Typography>
           <Box display="flex" justifyContent="space-between">
-            <Typography component="legend">Ranking</Typography>
+            <Rating  value={Number(place.rating)} readOnly />
             <Typography gutterBottom variant="subtitle1">
-              {place.ranking}
+              out of {place.num_reviews}
             </Typography>
           </Box>
           {place?.awards?.map((award) => (
