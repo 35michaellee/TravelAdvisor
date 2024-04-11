@@ -4,7 +4,7 @@ import { CssBaseline, Grid } from '@material-ui/core';
 import Header from "./Components/Header/Header";
 import Map from "./Components/Map/Map";
 import List from "./Components/List/List";
-import { getPlacesData } from "./api";
+import { getPlacesData,getWeatherData } from "./api";
 
 const App = () => {
     const [places, setPlaces] = useState([]);
@@ -13,9 +13,11 @@ const App = () => {
     const [bounds, setBounds] = useState({});
     const [isLoading, setIsLoading] = useState(false); //helpswhen places is empty we need to wait 
     const [type,setType]= useState('restaurants');
-    const [rating,setRating]=useState('All');
+    const [rating,setRating]=useState('');
     const [filteredPlaces, setFilterdPlaces] = useState([]);
     const [autocomplete, setAutocomplete] = useState(null);
+    const [weatherData,setWeatherData] = useState(null);
+
     useEffect(() => {
         navigator.geolocation.getCurrentPosition(
             ({ coords: { latitude, longitude } }) => {
@@ -32,6 +34,8 @@ const App = () => {
         const fetchData = async () => {
             setIsLoading(true);
             try {
+                const wdata = await getWeatherData(coords.lat, coords.lon);
+                setWeatherData(wdata);
                 const data = await getPlacesData(type,bounds.sw, bounds.ne);
                 setPlaces(data?.filter((place)=> place.name && place.num_reviews >0));
         
@@ -90,6 +94,7 @@ const App = () => {
                         coords={coords}
                         places={filteredPlaces.length ? filteredPlaces : places}
                         setChildClicked={setChildClicked}
+                        weatherData ={weatherData}
                     />
                 </Grid>
             </Grid>
